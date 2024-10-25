@@ -31,3 +31,11 @@ function Spartan(spartanPlayer, server) {
 	server.runCommandSilent(`bossbar set minecraft:bossbar max ${maxHealth.toString()}`);
 	server.runCommandSilent(`bossbar set minecraft:bossbar value ${health.toString()}`);
 }
+
+
+
+
+
+
+
+new StartupLogger('Loaded test.js');
