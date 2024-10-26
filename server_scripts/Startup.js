@@ -16,9 +16,5 @@
 			return;
 		}
 		hasLoaded = true;
-
-		let playerMoney = new PlayerMoney(Desynq(server));
-		playerMoney.add(15);
-		Desynq(server).tell(playerMoney.get());
 	});
 })();

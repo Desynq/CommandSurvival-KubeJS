@@ -9,7 +9,10 @@
 		}
 
 		StartupLogger.instances.forEach(logger => {
-			event.server.players.toArray().find(player => player.username == 'Desynq').tell(logger.message);
+			const desynq = event.server.players.toArray().find(player => player.username == 'Desynq');
+			if (desynq !== undefined) {
+				desynq.tell(logger.message)
+			}
 		})
 		hasLoaded = true;
 	});

@@ -1,6 +1,35 @@
 // priority: 1
 
 
+function Money() {}
+
+/**
+ * 
+ * @param {number} number 
+ * @returns {number}
+ */
+Money.FromDollar = function (number) {
+	return number * 100;
+}
+
+/**
+ * @param {number} number
+ * @returns {number}
+ */
+Money.ToDollar = function (number) {
+	return number / 100;
+}
+
+/**
+ * Converts the inputted number to "x.xx" format
+ * @param {number} number
+ * @returns {string}
+ */
+Money.ToDollarString = function (number) {
+	return `$${Money.ToDollar(number).toFixed(2)}`;
+}
+
+
 
 
 
