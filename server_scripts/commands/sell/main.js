@@ -84,6 +84,7 @@ ServerEvents.commandRegistry(event => {
 
 				.then($Commands.literal("info")
 					.executes(context => {
+						new ViewSellableItem(context);
 						return 1;
 					})
 				)

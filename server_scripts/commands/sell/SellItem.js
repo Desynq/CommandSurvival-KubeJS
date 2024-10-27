@@ -81,7 +81,13 @@ function SellItem(context, sellAll)
 
 SellItem.prototype.logTransaction = function ()
 {
-	Desynq(this.server).tell(this.itemValue);
+	const desynq = Desynq(this.server);
+	if (desynq === null)
+	{
+		return;
+	}
+
+	desynq.tell(Text.gray(`Player ${this.player.username} sold ${this.amountSold} ${this.item} for ${this.totalValue}`));
 }
 
 /**
@@ -122,9 +128,6 @@ SellItem.getRealItemValue = function (server, item)
 	}
 
 	let globalAmountSold = SellTracker.getSold(server, item);
-
-
-	Desynq(server).tell(`${baseValue} ${percentageLoss} ${exponentialGroup} ${globalAmountSold}`);
 
 	return Math.ceil(baseValue * ((1 - percentageLoss) ** (globalAmountSold / exponentialGroup)));
 }
