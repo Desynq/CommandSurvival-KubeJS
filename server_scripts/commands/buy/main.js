@@ -2,11 +2,39 @@
 
 
 
-BuyCommand.pricedItems = {
-	"minecraft:leather": Money.FromDollar(24.99),
-	"unbreaking_3_book": Money.FromDollar(749.99),
-	"minecraft:experience_bottle": Money.FromDollar(7.49)
+BuyCommand.PricedItems = {
+	// utility
+	"minecraft:sponge": 75.00,
+
+	// magic
+	"minecraft:experience_bottle": 7.50,
+
+	// gems
+	"minecraft:diamond": 100.00,
+	"minecraft:emerald": 5.00,
+	"minecraft:amethyst": 5.00,
+	"minecraft:quartz": 0.50,
+
+	// raw ores
+	"minecraft:raw_iron": 8.00,
+	"minecraft:raw_copper": 1.00,
+	"minecraft:raw_gold": 10.00,
+	"create:raw_zinc": 4.00,
+
+	// raw materials
+	"minecraft:leather": 25.00,
+	"minecraft:ender_pearl": 100.00,
+	"minecraft:string": 1.00,
+	"minecraft:blaze_rod": 20.00,
+
+	// custom
+	"unbreaking_3_book": 750.00,
 }
+
+// convert from human-readable dollars to raw money
+Object.keys(BuyCommand.PricedItems).forEach(itemName => {
+	BuyCommand.PricedItems[itemName] = Money.FromDollarWithCharm(BuyCommand.PricedItems[itemName]);
+});
 
 
 
@@ -41,7 +69,7 @@ function BuyCommand(event)
  */
 BuyCommand.prototype.suggestItem = function (context, builder)
 {
-	const items = Object.keys(BuyCommand.pricedItems);
+	const items = Object.keys(BuyCommand.PricedItems);
 	for (let item of items)
 	{
 		builder.suggest(`"${item}"`);
@@ -93,7 +121,7 @@ BuyCommand.prototype.buy = function (context)
 	const player = context.source.player;
 
 	const item = this.Arguments.STRING.getResult(context, "item");
-	const items = Object.keys(BuyCommand.pricedItems);
+	const items = Object.keys(BuyCommand.PricedItems);
 	if (items.indexOf(item) === -1)
 	{
 		player.tell(Text.red("Bro is trying to buy something that doesn't exist :pensive:"));
@@ -107,7 +135,7 @@ BuyCommand.prototype.buy = function (context)
 		return 1;
 	}
 
-	const price = BuyCommand.pricedItems[item];
+	const price = BuyCommand.PricedItems[item];
 	if (amount == 0)
 	{
 		player.tell(Text.yellow(`This item costs: ${Money.ToDollarString(price)}`));
