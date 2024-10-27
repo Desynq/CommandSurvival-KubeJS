@@ -9,15 +9,23 @@
  * @typedef {Object<string, number[1] | number[3]} SellableItems
  */
 const SellableItems = {
+	// blocks
 	"minecraft:netherrack": [Money.FromDollar(0.01)],
+	"minecraft:cobbled_deepslate": [Money.FromDollar(0.01)],
+
+	// minerals
 	"minecraft:diamond": [Money.FromDollar(100.00), 0.2, 100],
-	"minecraft:sugar_cane": [Money.FromDollar(0.40), 0.5, 1000],
 	"minecraft:iron_ingot": [Money.FromDollar(4.00), 0.2, 200],
 	"minecraft:gold_ingot": [Money.FromDollar(5.00)],
+
+	// farming
+	"minecraft:sugar_cane": [Money.FromDollar(0.40), 0.5, 1000],
 	"minecraft:carrot": [Money.FromDollar(0.05), 0.5, 2000],
 	"minecraft:baked_potato": [Money.FromDollar(0.10), 0.2, 1500],
+	"minecraft:wheat": [Money.FromDollar(0.20), 0.2, 500],
+
+	// mob drops
 	"minecraft:tropical_fish": [Money.FromDollar(2.00), 0.25, 100],
-	"minecraft:cobbled_deepslate": [Money.FromDollar(0.01)],
 }
 
 
@@ -28,8 +36,6 @@ const SellableItems = {
  */
 
 function suggestSellableItem(context, builder) {
-	const { source, source: { player } } = context;
-
 	const items = Object.keys(SellableItems);
 	for (let item of items) {
 		builder.suggest(`"${item}"`);
