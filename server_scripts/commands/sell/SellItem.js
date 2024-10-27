@@ -82,12 +82,12 @@ function SellItem(context, sellAll)
 SellItem.prototype.logTransaction = function ()
 {
 	const desynq = Desynq(this.server);
-	if (desynq === null)
+	if (desynq == null)
 	{
 		return;
 	}
 
-	desynq.tell(Text.gray(`Player ${this.player.username} sold ${this.amountSold} ${this.item} for ${this.totalValue}`));
+	desynq.tell(Text.gray(`Player ${this.player.username} sold ${this.amountSold} ${this.item} for ${Money.ToDollarString(this.totalValue)}`));
 }
 
 /**
