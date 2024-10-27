@@ -10,10 +10,11 @@ ServerEvents.tick(event => {
 	}
 
 
-
+	let percentageLost;
 	function everyDawn()
 	{
-		SellTracker.diminishAll(server, 0.01); // half lost every irl day
+		percentageLost = biasedRandom(0.01, 0.25, 20)
+		SellTracker.diminishAll(server, percentageLost); // half lost every irl day
 		server.players !== null && server.players.toArray().forEach(player => broadcastDawn(player));
 	}
 
@@ -24,7 +25,7 @@ ServerEvents.tick(event => {
 	{
 		player.tell(ConcatString(
 			"A new dawn rises.\n",
-			"All items sold have diminished by 1.00%."
+			`All sold items have diminished by ${(percentageLost * 100).toFixed(2)}%.`
 		));
 	}
 });
