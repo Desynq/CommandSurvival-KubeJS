@@ -60,8 +60,8 @@
 					"block_condition": {
 						"type": "origins:fluid",
 						"fluid_condition": {
-							"type": "origins:fluid",
-							"fluid": "minecraft:water"
+							"type": "origins:in_tag",
+							"tag": "minecraft:water"
 						}
 					}
 				},
@@ -86,8 +86,8 @@
 					"block_condition": {
 						"type": "origins:fluid",
 						"fluid_condition": {
-							"type": "origins:fluid",
-							"fluid": "minecraft:water"
+							"type": "origins:in_tag",
+							"tag": "minecraft:water"
 						}
 					}
 				},
@@ -110,8 +110,8 @@
 					"block_condition": {
 						"type": "origins:fluid",
 						"fluid_condition": {
-							"type": "origins:fluid",
-							"fluid": "minecraft:water"
+							"type": "origins:in_tag",
+							"tag": "minecraft:water"
 						}
 					}
 				},
