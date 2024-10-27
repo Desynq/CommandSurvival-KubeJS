@@ -29,6 +29,10 @@ Money.ToDollar = function (number)
  */
 Money.ToDollarString = function (number)
 {
+	if (number < 0)
+	{
+		return `-$${Money.ToDollar(Math.abs(number)).toFixed(2)}`;
+	}
 	return `$${Money.ToDollar(number).toFixed(2)}`;
 }
 
