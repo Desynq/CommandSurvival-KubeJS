@@ -21,4 +21,14 @@ function EntityTick(entity, server) {
 	if (entity.type == 'minecraft:zombie' && entity.team == null) {
 		server.runCommandSilent(`team join zombies ${entity.stringUUID}`);
 	}
+
+	if (entity.level.dimension == "twilight_forest:twilight_forest")
+	{
+		TwilightForest();
+	}
+
+	function TwilightForest()
+	{
+		
+	}
 }
