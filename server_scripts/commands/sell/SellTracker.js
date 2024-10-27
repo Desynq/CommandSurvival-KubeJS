@@ -1,42 +1,58 @@
 // priority: 2
 
-const SellTracker = {}
-
-/**
- * @param {$MinecraftServer_} server
- * @param {string} item
- * @returns {number}
- */
-SellTracker.getSold = function (server, item)
-{
-	return server.persistentData.getCompound('items_sold').getInt(item);
-}
-
-/**
- * @param {$MinecraftServer_} server
- * @param {string} item 
- * @param {number} newAmount 
- */
-SellTracker.updateSold = function (server, item, newAmount)
-{
-	let compoundTag = server.persistentData.getCompound('items_sold');
-
-	if (compoundTag.empty)
+const SellTracker = {
+	/**
+	 * @param {$MinecraftServer_} server
+	 * @param {string} itemName
+	 * @returns {number}
+	 */
+	getSold(server, itemName)
 	{
-		server.persistentData.put('items_sold', new $CompoundTag());
-		compoundTag = server.persistentData.getCompound('items_sold');
+		return server.persistentData.getCompound('items_sold').getDouble(itemName);
+	},
+
+
+	/**
+	 * @param {$MinecraftServer_} server
+	 * @param {string} itemName 
+	 * @param {number} newAmount 
+	 */
+	updateSold(server, itemName, newAmount)
+	{
+		let compoundTag = server.persistentData.getCompound('items_sold');
+
+		if (compoundTag.empty)
+		{
+			server.persistentData.put('items_sold', new $CompoundTag());
+			compoundTag = server.persistentData.getCompound('items_sold');
+		}
+
+		compoundTag.putDouble(itemName, newAmount);
+	},
+
+
+	/**
+	 * @param {$MinecraftServer_} server
+	 * @param {string} itemName 
+	 * @param {number} amount 
+	 */
+	addSold(server, itemName, amount)
+	{
+		let currentAmount = SellTracker.getSold(server, itemName);
+		SellTracker.updateSold(server, itemName, currentAmount + amount);
+	},
+
+
+	/**
+	 * @param {$MinecraftServer_} server
+	 * @param {number} percentageLost percentage of items lost after the method call
+	 */
+	diminishAll(server, percentageLost)
+	{
+		Object.keys(SellableItems).forEach(itemName => {
+			let amountSold = SellTracker.getSold(server, itemName);
+			amountSold *= 1 - percentageLost;
+			SellTracker.updateSold(server, itemName, amountSold);
+		});
 	}
-
-	compoundTag.putInt(item, newAmount);
-}
-
-/**
- * @param {$MinecraftServer_} server
- * @param {string} item 
- * @param {number} amount 
- */
-SellTracker.addSold = function (server, item, amount)
-{
-	let currentAmount = SellTracker.getSold(server, item);
-	SellTracker.updateSold(server, item, currentAmount + amount);
 }
