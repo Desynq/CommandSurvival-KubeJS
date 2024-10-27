@@ -23,7 +23,7 @@ Money.ToDollar = function (number)
 }
 
 /**
- * Converts the inputted number to "x.xx" format
+ * Converts the inputted number to "$x.xx" format
  * @param {number} number
  * @returns {string}
  */

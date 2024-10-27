@@ -1,10 +1,10 @@
 {
-	"replace": false,
+	"replace": true,
 	"order": 0,
 	"enabled": true,
 	"origins": [
-		"origins:human",
-		"commandsurvival:warped"
+		"command_survival:human",
+		"command_survival:warped"
 	],
 	"allow_random": true,
 	"exclude_random": [
