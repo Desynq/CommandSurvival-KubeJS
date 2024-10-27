@@ -13,6 +13,11 @@ Money.FromDollar = function (number)
 	return number * 100;
 }
 
+Money.FromDollarWithCharm = function (number)
+{
+	return (number - 0.01) * 100;
+}
+
 /**
  * @param {number} number
  * @returns {number}
