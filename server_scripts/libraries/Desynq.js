@@ -7,5 +7,12 @@
  * @returns {$Player_}
  */
 function Desynq(server) {
-	return server.players.toArray().find(player => player.username == 'Desynq');
+	try
+	{
+		return server.players.toArray().find(player => player.username == 'Desynq');
+	}
+	catch (error)
+	{
+		return null;
+	}
 }

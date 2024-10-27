@@ -1,14 +1,15 @@
 // priority: 1
 
 
-function Money() {}
+function Money() { }
 
 /**
  * 
  * @param {number} number 
  * @returns {number}
  */
-Money.FromDollar = function (number) {
+Money.FromDollar = function (number)
+{
 	return number * 100;
 }
 
@@ -16,7 +17,8 @@ Money.FromDollar = function (number) {
  * @param {number} number
  * @returns {number}
  */
-Money.ToDollar = function (number) {
+Money.ToDollar = function (number)
+{
 	return number / 100;
 }
 
@@ -25,51 +27,50 @@ Money.ToDollar = function (number) {
  * @param {number} number
  * @returns {string}
  */
-Money.ToDollarString = function (number) {
+Money.ToDollarString = function (number)
+{
 	return `$${Money.ToDollar(number).toFixed(2)}`;
 }
 
 
 
 
-
-
-
-/** @type {$Player_} */
-PlayerMoney.prototype.player = null;
-
-/** @type {$MinecraftServer_} */
-PlayerMoney.prototype.server = null;
+const PlayerMoney = {};
 
 /**
- * Money is stored as a long where the last 2 digits are the cents
- * @param {$Player_} player
- * @constructor
+ * @param {$MinecraftServer_} server 
+ * @param {string} username 
+ * @returns 
  */
-function PlayerMoney(player) {
-	this.player = player;
-	this.server = this.player.server;
-}
-
-PlayerMoney.prototype.get = function () {
-	return this.server.persistentData.getCompound('player_money').getLong(this.player.username);
+PlayerMoney.get = function (server, username)
+{
+	return server.persistentData.getCompound("player_money").getLong(username);
 }
 
 /**
- * @param {number} newMoney 
+ * @param {$MinecraftServer_} server 
+ * @param {string} username 
+ * @param {number} amount 
  */
-PlayerMoney.prototype.set = function (newMoney) {
-	let compoundTag = this.server.persistentData.getCompound('player_money');
-
-	if (compoundTag.empty) {
-		this.server.persistentData.put('player_money', new $CompoundTag());
-		compoundTag = this.server.persistentData.getCompound('player_money');
+PlayerMoney.set = function (server, username, amount)
+{
+	let compoundTag = server.persistentData.getCompound("player_money");
+	if (compoundTag.empty)
+	{
+		server.persistentData.put("player_money", new $CompoundTag());
+		compoundTag = server.persistentData.getCompound("player_money");
 	}
 
-	compoundTag.putLong(this.player.username, newMoney);
+	compoundTag.putLong(username, amount);
 }
 
-PlayerMoney.prototype.add = function (moneyDiff) {
-	let currentMoney = this.get();
-	this.set(currentMoney + moneyDiff);
+/**
+ * @param {$MinecraftServer_} server 
+ * @param {string} username 
+ * @param {number} amount 
+ */
+PlayerMoney.add = function (server, username, amount)
+{
+	const currentMoney = PlayerMoney.get(server, username);
+	PlayerMoney.set(server, username, currentMoney + amount);
 }

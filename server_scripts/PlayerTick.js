@@ -11,27 +11,30 @@ PlayerTick.prototype.player = null;
 /** @type {$MinecraftServer_} */
 PlayerTick.prototype.server = null;
 
-/** @type {PlayerMoney} */
-PlayerTick.prototype.playerMoney = null;
-
 
 
 /**
  * @param {$SimplePlayerEvent_} event 
  */
-function PlayerTick(event) {
+function PlayerTick(event)
+{
 	this.player = event.player;
 	this.server = event.server;
-	
-	this.playerMoney = new PlayerMoney(this.player);
 
-	if (this.player.username == 'Desynq') {
+	if (this.player.username == "Desynq")
+	{
 		this.server.players.forEach(player => DesynqTickAPlayer(this.player, this.server, player))
+	}
+
+	if (this.player.nbt.getString("Dimension") == "dimdoors:dungeon_pockets")
+	{
+		//this.player.addEffect("")
 	}
 
 
 
-	if (this.player.stats.timeSinceDeath == 1) {
+	if (this.player.stats.timeSinceDeath == 1)
+	{
 		this.restoreHungerFromLastLife();
 	}
 
@@ -47,12 +50,14 @@ function PlayerTick(event) {
 
 
 
-PlayerTick.prototype.restoreHungerFromLastLife = function () {
+PlayerTick.prototype.restoreHungerFromLastLife = function ()
+{
 	this.player.foodLevel = this.player.persistentData.getFloat('food_level_last_tick');
 	this.player.saturation = this.player.persistentData.getFloat('saturation_last_tick');
 }
 
-PlayerTick.prototype.checkMovement = function () {
+PlayerTick.prototype.checkMovement = function ()
+{
 	let lastX = this.player.persistentData.getDouble('last_x');
 	let lastY = this.player.persistentData.getDouble('last_y');
 	let lastZ = this.player.persistentData.getDouble('last_z');
@@ -68,11 +73,12 @@ PlayerTick.prototype.checkMovement = function () {
 	this.server.runCommandSilent(`scoreboard players set ${this.player.username} is_moving ${Number(hasMoved)}`);
 }
 
-PlayerTick.prototype.updateInfoHUD = function () {
+PlayerTick.prototype.updateInfoHUD = function ()
+{
 	this.player.paint({
 		money: {
 			type: "text",
-			text: `$${(this.playerMoney.get() / 100).toFixed(2)}`,
+			text: `$${(PlayerMoney.get(this.server, this.player.username) / 100).toFixed(2)}`,
 			color: "green",
 			shadow: true,
 			alignX: "left",
@@ -84,7 +90,8 @@ PlayerTick.prototype.updateInfoHUD = function () {
 	});
 }
 
-PlayerTick.prototype.saveDataForNextTick = function () {
+PlayerTick.prototype.saveDataForNextTick = function ()
+{
 	this.player.persistentData.putFloat('food_level_last_tick', this.player.foodLevel);
 	this.player.persistentData.putFloat('saturation_last_tick', this.player.saturation);
 
@@ -106,8 +113,10 @@ PlayerTick.prototype.saveDataForNextTick = function () {
  * @param {$MinecraftServer} server 
  * @param {$Player} player 
  */
-function DesynqTickAPlayer(desynq, server, player) {
-	if (player.deathTime == 1) {
+function DesynqTickAPlayer(desynq, server, player)
+{
+	if (player.deathTime == 1)
+	{
 		desynq.heal(5);
 	}
 }

@@ -44,7 +44,6 @@ function suggestSellableItem(context, builder) {
 function suggestAmount(context, builder) {
 	const { source, source: { player } } = context;
 
-	builder.suggest("0");
 	builder.suggest("1");
 	builder.suggest("32");
 	builder.suggest("64");
@@ -79,6 +78,12 @@ ServerEvents.commandRegistry(event => {
 				.then(Commands.literal("all")
 					.executes(context => {
 						new SellItem(context, true);
+						return 1;
+					})
+				)
+
+				.then($Commands.literal("info")
+					.executes(context => {
 						return 1;
 					})
 				)

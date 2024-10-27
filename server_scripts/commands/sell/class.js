@@ -60,7 +60,7 @@ function SellItem(context, sellAll)
 	else
 	{
 		this.amountToSell = $ArgumentTypeWrappers.INTEGER.getResult(this.context, "amount");
-		if (this.amount < 0)
+		if (this.amountToSell <= 0)
 		{
 			this.player.tell(Text.red("Sell an actual quantity next time."));
 			return;
@@ -68,18 +68,41 @@ function SellItem(context, sellAll)
 	}
 
 	this.itemValue = SellItem.getRealItemValue(this.server, this.item);
-	Desynq(this.server).tell(this.itemValue);
+	if (this.itemValue === null || this.itemValue === undefined)
+	{
+		this.player.tell(Text.darkRed("Something went horribly wrong"));
+		return;
+	}
 
+	this.sellItem();
+	this.tellOutput();
+	this.logTransaction();
+}
+
+SellItem.prototype.logTransaction = function ()
+{
+	Desynq(this.server).tell(this.itemValue);
+}
+
+/**
+ * Applies changes to the player and the server in order to simulate selling the item
+ * NONE of what's in this method can fail otherwise players can potentially gain money illegally or sell items without compensation or lose sell value
+ */
+SellItem.prototype.sellItem = function ()
+{
 	this.amountSold = this.server.runCommandSilent(`clear ${this.player.username} ${this.item} ${this.amountToSell}`);
-	if (!this.player.creative || !this.player.spectator) {
+
+	if (!this.player.creative || !this.player.spectator)
+	{
 		SellTracker.addSold(this.server, this.item, this.amountSold);
 	}
 
 	this.totalValue = this.amountSold * this.itemValue;
-	new PlayerMoney(this.player).add(this.totalValue);
-
-	this.tellOutput();
+	PlayerMoney.add(this.server, this.player.username, this.totalValue);
 }
+
+
+
 
 /**
  * @param {$MinecraftServer_} server 
@@ -93,11 +116,13 @@ SellItem.getRealItemValue = function (server, item)
 	const percentageLoss = itemEntry[1];
 	const exponentialGroup = itemEntry[2];
 
-	if (percentageLoss === undefined || exponentialGroup === undefined) {
+	if (percentageLoss === undefined || exponentialGroup === undefined)
+	{
 		return baseValue;
 	}
 
 	let globalAmountSold = SellTracker.getSold(server, item);
+
 
 	Desynq(server).tell(`${baseValue} ${percentageLoss} ${exponentialGroup} ${globalAmountSold}`);
 
