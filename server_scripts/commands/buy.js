@@ -110,7 +110,7 @@ BuyCommand.prototype.buy = function (context)
 	const price = BuyCommand.pricedItems[item];
 	if (amount == 0)
 	{
-		player.tell(Text.yellow(`This item costs: $${Money.ToDollarString(price)}`));
+		player.tell(Text.yellow(`This item costs: ${Money.ToDollarString(price)}`));
 		return 1;
 	}
 
