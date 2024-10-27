@@ -1,0 +1,14 @@
+{
+	"type": "origins:multiple",
+	"noregen": {
+		"type": "origins:effect_immunity",
+		"effects": [
+			"minecraft:poison",
+			"minecraft:regeneration"
+		]
+	},
+	"nightvision": {
+		"type": "origins:night_vision",
+		"strength": 1
+	}
+}

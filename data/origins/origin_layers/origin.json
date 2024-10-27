@@ -4,7 +4,8 @@
 	"enabled": true,
 	"origins": [
 		"command_survival:human",
-		"command_survival:warped"
+		"command_survival:warped",
+		"command_survival:cogwork"
 	],
 	"allow_random": true,
 	"exclude_random": [

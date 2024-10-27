@@ -1,0 +1,19 @@
+{
+	"name": "Cogwork",
+	"description": "robot man",
+	"powers": [
+		"command_survival:origins/cogwork/biomechanical",
+		"command_survival:origins/cogwork/steampower",
+		"command_survival:origins/cogwork/refuel",
+		"command_survival:origins/cogwork/repair",
+		"command_survival:origins/cogwork/arrowlauncher",
+		"command_survival:origins/cogwork/sink",
+		"command_survival:origins/cogwork/press",
+		"command_survival:origins/cogwork/furnace"
+	],
+	"icon": {
+		"item": "create:cogwheel"
+	},
+	"order": 2,
+	"impact": 3
+}
