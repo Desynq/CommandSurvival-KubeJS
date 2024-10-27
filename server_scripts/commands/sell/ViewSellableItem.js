@@ -26,6 +26,7 @@ ViewSellableItem.prototype.viewItem = function ()
 {
 	const basePrice = SellableItems[this.itemName][0];
 	const currentPrice = SellItem.getRealItemValue(this.server, this.itemName);
+	const circulationAmount = SellTracker.getSold(this.server, this.itemName);
 
 	const dashedLine = '-'.repeat(32);
 	this.executor.tell(ConcatString(
@@ -33,6 +34,7 @@ ViewSellableItem.prototype.viewItem = function ()
 		`Item: ${this.itemName}\n`,
 		`Base Price: ${Money.ToDollarString(basePrice)}\n`,
 		`Current Price: ${Money.ToDollarString(currentPrice)}\n`,
+		`Circulation: ${circulationAmount.toFixed(2)} Units\n`,
 		`${dashedLine}`
 	));
 }
