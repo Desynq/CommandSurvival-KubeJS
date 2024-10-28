@@ -10,7 +10,7 @@ function ViewSellableItem(context)
 {
 	this.server = context.source.server;
 	this.executor = context.source.player;
-	this.itemName = $ArgumentTypeWrappers.STRING.getResult(context, "item");
+	this.itemName = $Arguments.STRING.getResult(context, "item");
 
 	this.viewItem();
 }
@@ -37,4 +37,20 @@ ViewSellableItem.prototype.viewItem = function ()
 		`Circulation: ${circulationAmount.toFixed(2)} Units\n`,
 		`${dashedLine}`
 	));
+}
+
+/**
+ * 
+ * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
+ */
+ViewSellableItem.viewAllByDeviation = function (context)
+{
+	const executor = context.source.player;
+	const server = context.source.server;
+
+	const keys = Object.keys(SellableItems);
+	keys.sort((a, b) =>
+	{
+		const basePriceA = SellableItems[a][0];
+	});
 }

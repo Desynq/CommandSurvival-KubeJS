@@ -3,8 +3,8 @@
 
 
 /**
- * @param {$MinecraftServer_} server
- * @returns {$Player_}
+ * @param {Internal.MinecraftServer} server
+ * @returns {Internal.Player}
  */
 function Desynq(server) {
 	try

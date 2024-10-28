@@ -1,9 +1,5 @@
 // priority: 0
 
-import { $MinecraftServer } from "packages/net/minecraft/server/$MinecraftServer";
-import { $Entity } from "packages/net/minecraft/world/entity/$Entity";
-
-
 ServerEvents.tick(event => {
 	const { server } = event;
 
@@ -14,8 +10,8 @@ ServerEvents.tick(event => {
 
 /**
  * 
- * @param {$Entity} entity 
- * @param {$MinecraftServer} server
+ * @param {Internal.Entity} entity 
+ * @param {Internal.MinecraftServer} server
  */
 function EntityTick(entity, server) {
 	if (entity.type == 'minecraft:zombie' && entity.team == null) {
@@ -30,5 +26,15 @@ function EntityTick(entity, server) {
 	function TwilightForest()
 	{
 		
+	}
+
+	if (entity.tags.toArray().indexOf("boss") !== 0)
+	{
+		const bossbarId = `boss:${entity.stringUUID}`;
+		let bossbar = server.customBossEvents.get(bossbarId);
+		if (bossbar == null)
+		{
+			
+		}
 	}
 }

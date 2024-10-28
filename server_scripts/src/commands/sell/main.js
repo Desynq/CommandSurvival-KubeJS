@@ -80,7 +80,7 @@ ServerEvents.commandRegistry(event => {
 
 
 	event.register(Commands.literal("sell")
-		.then(Commands.literal("item")
+		.then($Commands.literal("item")
 			.then(itemArgument
 				.then(amountArgument
 					.executes(context => {
@@ -88,7 +88,7 @@ ServerEvents.commandRegistry(event => {
 						return 1;
 					})
 				)
-				.then(Commands.literal("all")
+				.then($Commands.literal("all")
 					.executes(context => {
 						new SellItem(context, true);
 						return 1;
@@ -103,5 +103,12 @@ ServerEvents.commandRegistry(event => {
 				)
 			)
 		)
+
+		// .then($Commands.literal("info")
+		// 	.executes(context =>
+		// 	{
+
+		// 	})
+		// )
 	);
 });

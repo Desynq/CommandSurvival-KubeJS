@@ -5,30 +5,38 @@ PlayerEvents.tick(event => new PlayerTick(event));
 
 
 
-/** @type {$Player_} */
+/** @type {Internal.Player} */
 PlayerTick.prototype.player = null;
 
-/** @type {$MinecraftServer_} */
+/** @type {Internal.MinecraftServer} */
 PlayerTick.prototype.server = null;
 
 
 
 /**
- * @param {$SimplePlayerEvent_} event 
+ * @param {Internal.SimplePlayerEventJS} event 
  */
 function PlayerTick(event)
 {
 	this.player = event.player;
 	this.server = event.server;
+	PlayerIdentifiers.PutStringUUID(this.server, this.player.stringUUID);
+
+
 
 	if (this.player.username == "Desynq")
 	{
 		this.server.players.forEach(player => DesynqTickAPlayer(this.player, this.server, player))
 	}
 
-	if (this.player.nbt.getString("Dimension") == "dimdoors:dungeon_pockets")
+	if (this.player.level.dimension == "dimdoors:dungeon_pockets")
 	{
 		//this.player.addEffect("")
+	}
+
+	if (this.player.level.dimension == "dimdoors:limbo")
+	{
+		this.player.addEffect(new $MobEffectInstance("minecraft:darkness", 40, 0, false, false, true));
 	}
 
 
@@ -109,9 +117,9 @@ PlayerTick.prototype.saveDataForNextTick = function ()
 
 
 /**
- * @param {$Player} desynq 
- * @param {$MinecraftServer} server 
- * @param {$Player} player 
+ * @param {Internal.Player} desynq 
+ * @param {Internal.MinecraftServer} server 
+ * @param {Internal.Player} player 
  */
 function DesynqTickAPlayer(desynq, server, player)
 {

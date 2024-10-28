@@ -16,8 +16,8 @@ AdminCommand.ItemsSoldChange = function (context)
 	}
 
 	const server = context.source.server;
-	const item = $ArgumentTypeWrappers.STRING.getResult(context, "item");
-	const newAmount = $ArgumentTypeWrappers.INTEGER.getResult(context, "new_amount");
+	const item = $Arguments.STRING.getResult(context, "item");
+	const newAmount = $Arguments.INTEGER.getResult(context, "new_amount");
 
 	SellTracker.updateSold(server, item, newAmount);
 }
@@ -34,8 +34,8 @@ AdminCommand.AddMoneyToPlayer = function (context)
 	}
 
 	/** @type {$Player_} */
-	const username = $ArgumentTypeWrappers.STRING.getResult(context, "username");
-	const amount = $ArgumentTypeWrappers.DOUBLE.getResult(context, "amount");
+	const username = $Arguments.STRING.getResult(context, "username");
+	const amount = $Arguments.DOUBLE.getResult(context, "amount");
 
 	const money = Money.FromDollar(amount);
 
@@ -55,7 +55,7 @@ AdminCommand.GetMoneyFromPlayer = function (context)
 	}
 	const server = context.source.server;
 
-	const username = $ArgumentTypeWrappers.STRING.getResult(context, "username");
+	const username = $Arguments.STRING.getResult(context, "username");
 	const money = PlayerMoney.get(server, username);
 
 	executor.tell(Text.gold(`Player ${username} has ${Money.ToDollarString(money)}`));
@@ -110,9 +110,9 @@ ServerEvents.commandRegistry(event =>
 		.then($Commands.literal("items_sold")
 
 			.then($Commands.literal("change")
-				.then($Commands.argument("item", $ArgumentTypeWrappers.STRING.create(event))
+				.then($Commands.argument("item", $Arguments.STRING.create(event))
 					.suggests((context, builder) => suggestSellableItem(context, builder))
-					.then($Commands.argument("new_amount", $ArgumentTypeWrappers.INTEGER.create(event))
+					.then($Commands.argument("new_amount", $Arguments.INTEGER.create(event))
 						.executes(context =>
 						{
 							AdminCommand.ItemsSoldChange(context);
@@ -130,8 +130,8 @@ ServerEvents.commandRegistry(event =>
 		 */
 		.then($Commands.literal("money")
 			.then($Commands.literal("add")
-				.then($Commands.argument("username", $ArgumentTypeWrappers.STRING.create(event))
-					.then($Commands.argument("amount", $ArgumentTypeWrappers.DOUBLE.create(event))
+				.then($Commands.argument("username", $Arguments.STRING.create(event))
+					.then($Commands.argument("amount", $Arguments.DOUBLE.create(event))
 						.executes(context =>
 						{
 							AdminCommand.AddMoneyToPlayer(context);
@@ -141,7 +141,7 @@ ServerEvents.commandRegistry(event =>
 				)
 			)
 			.then($Commands.literal("get")
-				.then($Commands.argument("username", $ArgumentTypeWrappers.STRING.create(event))
+				.then($Commands.argument("username", $Arguments.STRING.create(event))
 					.executes(context =>
 					{
 						AdminCommand.GetMoneyFromPlayer(context);

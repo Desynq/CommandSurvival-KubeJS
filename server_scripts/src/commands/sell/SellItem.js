@@ -43,7 +43,7 @@ function SellItem(context, sellAll)
 
 	this.sellAll = sellAll;
 
-	this.item = $ArgumentTypeWrappers.STRING.getResult(this.context, "item");
+	this.item = $Arguments.STRING.getResult(this.context, "item");
 	this.items = Object.keys(SellableItems);
 
 
@@ -59,7 +59,7 @@ function SellItem(context, sellAll)
 	}
 	else
 	{
-		this.amountToSell = $ArgumentTypeWrappers.INTEGER.getResult(this.context, "amount");
+		this.amountToSell = $Arguments.INTEGER.getResult(this.context, "amount");
 		if (this.amountToSell <= 0)
 		{
 			this.player.tell(Text.red("Sell an actual quantity next time."));
