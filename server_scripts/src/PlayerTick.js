@@ -20,7 +20,7 @@ function PlayerTick(event)
 {
 	this.player = event.player;
 	this.server = event.server;
-	PlayerIdentifiers.PutStringUUID(this.server, this.player.stringUUID);
+	PlayerIdentifiers.putStringUUID(this.server, this.player.stringUUID);
 
 
 
@@ -86,7 +86,7 @@ PlayerTick.prototype.updateInfoHUD = function ()
 	this.player.paint({
 		money: {
 			type: "text",
-			text: `$${(PlayerMoney.get(this.server, this.player.username) / 100).toFixed(2)}`,
+			text: `$${(PlayerMoney.get(this.server, this.player.stringUUID) / 100).toFixed(2)}`,
 			color: "green",
 			shadow: true,
 			alignX: "left",

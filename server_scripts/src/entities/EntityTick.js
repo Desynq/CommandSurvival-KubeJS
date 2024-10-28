@@ -30,7 +30,7 @@ function EntityTick(entity, server) {
 
 	if (entity.tags.toArray().indexOf("boss") !== 0)
 	{
-		const bossbarId = `boss:${entity.stringUUID}`;
+		let bossbarId = `boss:${entity.stringUUID}`;
 		let bossbar = server.customBossEvents.get(bossbarId);
 		if (bossbar == null)
 		{

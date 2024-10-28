@@ -23,10 +23,11 @@ AdminCommand.ItemsSoldChange = function (context)
 }
 
 /**
- * @param {$CommandContext_<$CommandSourceStack_>} context 
+ * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
  */
 AdminCommand.AddMoneyToPlayer = function (context)
 {
+	const server = context.source.server;
 	const executor = context.source.player;
 	if (!executor.op)
 	{
@@ -37,9 +38,10 @@ AdminCommand.AddMoneyToPlayer = function (context)
 	const username = $Arguments.STRING.getResult(context, "username");
 	const amount = $Arguments.DOUBLE.getResult(context, "amount");
 
+	const stringUUID = PlayerIdentifiers.getStringUUIDFromUsername(server, username)
 	const money = Money.FromDollar(amount);
 
-	PlayerMoney.add(context.source.server, username, money);
+	PlayerMoney.add(server, stringUUID, money);
 	executor.tell(Text.gold(`Added ${Money.ToDollarString(money)} to ${username}`));
 }
 
@@ -56,7 +58,7 @@ AdminCommand.GetMoneyFromPlayer = function (context)
 	const server = context.source.server;
 
 	const username = $Arguments.STRING.getResult(context, "username");
-	const money = PlayerMoney.get(server, username);
+	const money = PlayerMoney.get(server, PlayerIdentifiers.getStringUUIDFromUsername(server, username));
 
 	executor.tell(Text.gold(`Player ${username} has ${Money.ToDollarString(money)}`));
 }
@@ -64,6 +66,7 @@ AdminCommand.GetMoneyFromPlayer = function (context)
 
 
 /**
+ * 
  * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
  */
 AdminCommand.Reload = function (context)
@@ -100,9 +103,24 @@ AdminCommand.Reload = function (context)
 
 
 
+/**
+ * 
+ * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
+ */
+AdminCommand.AddPlayer = function (context)
+{
+	const server = context.source.server;
+	const username = $Arguments.STRING.getResult(context, "username");
+	const stringUUID = $Arguments.STRING.getResult(context, "string_uuid");
+	PlayerIdentifiers.appendUsernameToStringUUIDMap(server, username, stringUUID);
+}
+
+
+
 ServerEvents.commandRegistry(event =>
 {
 	event.register($Commands.literal("admin")
+		.requires(executor => executor.hasPermission(4))
 		/**
 		 * /admin items_solid change <item> <new_amount>
 		 * 
@@ -157,6 +175,18 @@ ServerEvents.commandRegistry(event =>
 				AdminCommand.Reload(context);
 				return 1;
 			})
+		)
+
+		.then($Commands.literal("add_player")
+			.then($Commands.argument("username", $Arguments.STRING.create(event))
+				.then($Commands.argument("string_uuid", $Arguments.STRING.create(event))
+					.executes(context =>
+					{
+						AdminCommand.AddPlayer(context);
+						return 1;
+					})
+				)
+			)
 		)
 
 

@@ -14,3 +14,5 @@ const $StringTag = Java.loadClass('net.minecraft.nbt.StringTag');
 const $ListTag = Java.loadClass("net.minecraft.nbt.ListTag");
 
 const $MobEffectInstance = Java.loadClass("net.minecraft.world.effect.MobEffectInstance");
+
+const $UUID = Java.loadClass("java.util.UUID");

@@ -144,7 +144,7 @@ BuyCommand.prototype.buy = function (context)
 
 	const cost = price * amount;
 
-	let money = PlayerMoney.get(player.server, player.username);
+	let money = PlayerMoney.get(player.server, player.stringUUID);
 	if (money < cost)
 	{
 		player.tell(Text.red("Come back when you're richer you broke ass ni-"));
@@ -152,7 +152,7 @@ BuyCommand.prototype.buy = function (context)
 	}
 
 	money -= cost;
-	PlayerMoney.set(player.server, player.username, money);
+	PlayerMoney.set(player.server, player.stringUUID, money);
 	switch (item)
 	{
 		case "unbreaking_3_book":

@@ -108,7 +108,8 @@ const AttributePoints = (function ()
 	 */
 	Class.prototype.buyPoints = function (amount)
 	{
-		const totalPoints = this.getTotalPoints();
+		const cost = this.getNextPointValue();
+		let money = PlayerMoney.get(server, this.playerStringUUID);
 	}
 
 	Class.prototype.resetPoints = function ()

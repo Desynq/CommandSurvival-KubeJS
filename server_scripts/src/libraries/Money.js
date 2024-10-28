@@ -47,21 +47,21 @@ Money.ToDollarString = function (number)
 const PlayerMoney = {};
 
 /**
- * @param {$MinecraftServer_} server 
- * @param {string} username 
+ * @param {Internal.MinecraftServer} server 
+ * @param {string} stringUUID 
  * @returns 
  */
-PlayerMoney.get = function (server, username)
+PlayerMoney.get = function (server, stringUUID)
 {
-	return server.persistentData.getCompound("player_money").getLong(username);
+	return server.persistentData.getCompound("player_money").getLong(stringUUID);
 }
 
 /**
- * @param {$MinecraftServer_} server 
- * @param {string} username 
+ * @param {Internal.MinecraftServer} server 
+ * @param {string} stringUUID 
  * @param {number} amount 
  */
-PlayerMoney.set = function (server, username, amount)
+PlayerMoney.set = function (server, stringUUID, amount)
 {
 	let compoundTag = server.persistentData.getCompound("player_money");
 	if (compoundTag.empty)
@@ -70,16 +70,16 @@ PlayerMoney.set = function (server, username, amount)
 		compoundTag = server.persistentData.getCompound("player_money");
 	}
 
-	compoundTag.putLong(username, amount);
+	compoundTag.putLong(stringUUID, amount);
 }
 
 /**
- * @param {$MinecraftServer_} server 
- * @param {string} username 
+ * @param {Internal.MinecraftServer} server 
+ * @param {string} stringUUID 
  * @param {number} amount 
  */
-PlayerMoney.add = function (server, username, amount)
+PlayerMoney.add = function (server, stringUUID, amount)
 {
-	const currentMoney = PlayerMoney.get(server, username);
-	PlayerMoney.set(server, username, currentMoney + amount);
+	const currentMoney = PlayerMoney.get(server, stringUUID);
+	PlayerMoney.set(server, stringUUID, currentMoney + amount);
 }
