@@ -57,9 +57,48 @@ AdminCommand.GetMoneyFromPlayer = function (context)
 
 	const username = $ArgumentTypeWrappers.STRING.getResult(context, "username");
 	const money = PlayerMoney.get(server, username);
-	
+
 	executor.tell(Text.gold(`Player ${username} has ${Money.ToDollarString(money)}`));
 }
+
+
+
+/**
+ * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
+ */
+AdminCommand.Reload = function (context)
+{
+	const server = context.source.server;
+
+	server.players.tell("Reloading in 5 seconds");
+
+	server.scheduleInTicks(20, callback =>
+	{
+		server.players.tell("Reloading in 4 seconds");
+	});
+	server.scheduleInTicks(40, callback =>
+	{
+		server.players.tell("Reloading in 3 seconds");
+	});
+
+	server.scheduleInTicks(60, callback =>
+	{
+		server.players.tell("Reloading in 2 seconds");
+	});
+
+	server.scheduleInTicks(80, callback =>
+	{
+		server.players.tell("Reloading in 1 second");
+	});
+
+	server.scheduleInTicks(100, callback =>
+	{
+		server.players.tell("Reloading...");
+		server.runCommandSilent("reload");
+	});
+}
+
+
 
 ServerEvents.commandRegistry(event =>
 {
@@ -103,12 +142,21 @@ ServerEvents.commandRegistry(event =>
 			)
 			.then($Commands.literal("get")
 				.then($Commands.argument("username", $ArgumentTypeWrappers.STRING.create(event))
-					.executes(context => {
+					.executes(context =>
+					{
 						AdminCommand.GetMoneyFromPlayer(context);
 						return 1;
 					})
 				)
 			)
+		)
+
+		.then($Commands.literal("reload")
+			.executes(context =>
+			{
+				AdminCommand.Reload(context);
+				return 1;
+			})
 		)
 
 
