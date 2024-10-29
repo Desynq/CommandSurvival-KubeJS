@@ -9,7 +9,9 @@
 		"command_survival:origins/cogwork/arrowlauncher",
 		"command_survival:origins/cogwork/sink",
 		"command_survival:origins/cogwork/press",
-		"command_survival:origins/cogwork/furnace"
+		"command_survival:origins/cogwork/furnace",
+		"command_survival:origins/cogwork/flamethrower",
+		"command_survival:origins/cogwork/overheat"
 	],
 	"icon": {
 		"item": "create:cogwheel"
