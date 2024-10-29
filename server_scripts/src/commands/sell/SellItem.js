@@ -104,7 +104,7 @@ SellItem.prototype.sellItem = function ()
 	}
 
 	this.totalValue = this.amountSold * this.itemValue;
-	PlayerMoney.add(this.server, this.player.stringUUID, this.totalValue);
+	PlayerMoney.add(this.server, this.player.uuid.toString(), this.totalValue);
 }
 
 

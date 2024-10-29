@@ -1,4 +1,4 @@
-// priority: 2147483647
+// priority: 2147483646
 
 /*
 {
@@ -13,14 +13,14 @@ const PlayerIdentifiers = (function ()
 	function Class()
 	{ }
 
-
+	Class.PLAYER_USERNAME_TO_STRING_UUID_MAP_KEY = "player_username_to_string_uuid_map";
 	Class.PLAYER_STRING_UUIDS_KEY = "player_string_uuids";
-	Class.STRING_TAG_TYPE = 9;
 
 
 	/**
-	 * @param {Internal.MinecraftServer} server 
-	 * @param {string} username 
+	 * 
+	 * @param {Internal.MinecraftServer} server
+	 * @param {string} stringUUID
 	 */
 	Class.putStringUUID = function (server, stringUUID)
 	{
@@ -35,11 +35,9 @@ const PlayerIdentifiers = (function ()
 		server.persistentData.put(Class.PLAYER_STRING_UUIDS_KEY, listTag);
 	}
 
-	Class.PLAYER_USERNAME_TO_STRING_UUID_MAP_KEY = "player_username_to_string_uuid_map";
-
 	/**
 	 * 
-	 * @param {Internal.MinecraftServer} server 
+	 * @param {Internal.MinecraftServer} server
 	 * @param {string} username 
 	 */
 	Class.getStringUUIDFromUsername = function (server, username)
@@ -49,7 +47,7 @@ const PlayerIdentifiers = (function ()
 
 	/**
 	 * 
-	 * @param {Internal.MinecraftServer} server 
+	 * @param {Internal.MinecraftServer} server
 	 * @param {string} username
 	 * @param {string} stringUUID 
 	 */
@@ -60,6 +58,16 @@ const PlayerIdentifiers = (function ()
 		server.persistentData.put(Class.PLAYER_USERNAME_TO_STRING_UUID_MAP_KEY, compound);
 	}
 
+	/**
+	 * 
+	 * @param {Internal.MinecraftServer} server
+	 * @returns {string[]}
+	 */
+	Class.getUsernames = function (server)
+	{
+		return server.persistentData.getCompound(Class.PLAYER_USERNAME_TO_STRING_UUID_MAP_KEY).getAllKeys().toArray();
+	}
+
 
 
 	return Class;
@@ -68,7 +76,7 @@ const PlayerIdentifiers = (function ()
 
 PlayerEvents.tick(event =>
 {
-	const server = event.server;
-	const player = event.player;
-	PlayerIdentifiers.appendUsernameToStringUUIDMap(server, player.username, player.stringUUID);
+	const { server, player } = event;
+	PlayerIdentifiers.putStringUUID(server, player.uuid.toString());
+	PlayerIdentifiers.appendUsernameToStringUUIDMap(server, player.username, player.uuid.toString());
 });

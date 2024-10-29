@@ -20,8 +20,9 @@ const SellableItems = {
 	// ingots
 	"minecraft:iron_ingot": [Money.FromDollar(4.00), 0.2, 200],
 	"minecraft:gold_ingot": [Money.FromDollar(5.00)],
-	"minecraft:copper_ingot": [Money.FromDollar(0.50, 0.2, 400)],
-	"create:zinc_ingot": [Money.FromDollar(2.00, 0.2, 200)],
+	"minecraft:copper_ingot": [Money.FromDollar(0.50), 0.2, 400],
+	"create:zinc_ingot": [Money.FromDollar(2.00), 0.2, 200],
+	"minecraft:netherite_ingot": [Money.FromDollar(1000.0), 0.5, 100],
 
 	// farming
 	"minecraft:carrot": [Money.FromDollar(0.05), 0.2, 1000],

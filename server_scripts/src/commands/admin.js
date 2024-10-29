@@ -101,6 +101,33 @@ AdminCommand.Reload = function (context)
 	});
 }
 
+/**
+ * 
+ * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
+ */
+AdminCommand.ReloadFast = function (context)
+{
+	const server = context.source.server;
+	server.players.tell(Text.darkRed("Expect frequent reloads!"));
+	server.players.tell("Reloading in 3 seconds");
+
+	server.scheduleInTicks(20, callback =>
+	{
+		server.players.tell("Reloading in 2 seconds");
+	});
+	server.scheduleInTicks(40, callback =>
+	{
+		server.players.tell("Reloading in 1 second");
+	});
+
+	server.scheduleInTicks(60, callback =>
+	{
+		server.players.tell("Reloading...");
+		server.runCommandSilent("reload");
+	});
+	return 1;
+}
+
 
 
 /**
@@ -175,6 +202,9 @@ ServerEvents.commandRegistry(event =>
 				AdminCommand.Reload(context);
 				return 1;
 			})
+			.then($Commands.literal("fast")
+				.executes(context => AdminCommand.ReloadFast(context))
+			)
 		)
 
 		.then($Commands.literal("add_player")

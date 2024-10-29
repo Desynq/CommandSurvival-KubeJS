@@ -1,6 +1,4 @@
-// priority: 1000
-
-
+// priority: 2147483647
 
 
 
@@ -11,8 +9,8 @@
 	let hasLoaded = false;
 
 	ServerEvents.tick(event => {
-		const { server } = event;
-		if (hasLoaded) {
+		if (hasLoaded)
+		{
 			return;
 		}
 		hasLoaded = true;
