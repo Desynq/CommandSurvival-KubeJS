@@ -5,7 +5,8 @@
 	"origins": [
 		"command_survival:human",
 		"command_survival:warped",
-		"command_survival:cogwork"
+		"command_survival:cogwork",
+		"command_survival:zephyr"
 	],
 	"allow_random": true,
 	"exclude_random": [
