@@ -11,7 +11,8 @@
 		"command_survival:origins/zephyr/blast",
 		"command_survival:origins/zephyr/pull",
 		"command_survival:origins/zephyr/heavyrestrict",
-		"command_survival:origins/zephyr/windwall"
+		"command_survival:origins/zephyr/windwall",
+		"command_survival:origins/zephyr/lightning-immunity"
 	],
 	"order": 4,
 	"impact": 2
