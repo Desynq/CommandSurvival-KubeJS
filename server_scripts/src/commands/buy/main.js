@@ -27,6 +27,9 @@ BuyCommand.PricedItems = {
 	"minecraft:string": 1.00,
 	"minecraft:blaze_rod": 20.00,
 
+	// advanced crafting materials
+	"minecraft:netherite_upgrade_smithing_template": 2000.00,
+
 	// custom
 	"unbreaking_3_book": 750.00,
 }
