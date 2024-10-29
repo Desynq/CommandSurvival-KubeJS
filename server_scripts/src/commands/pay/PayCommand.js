@@ -137,7 +137,6 @@ const PayCommand = (function ()
 	Class.registerCommand = function (event)
 	{
 		event.register($Commands.literal("pay")
-			.requires(executor => executor.hasPermission(4))
 			.then($Commands.argument(Class.RECIPIENT_ARGUMENT_ID, $Arguments.STRING.create(event))
 				.suggests((context, builder) => PayCommand.suggestPlayer(context, builder))
 				.then($Commands.argument(Class.AMOUNT_ARGUMENT_ID, $Arguments.STRING.create(event))
