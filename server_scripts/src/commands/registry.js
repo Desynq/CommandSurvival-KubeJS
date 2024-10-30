@@ -5,4 +5,5 @@
 ServerEvents.commandRegistry(event => 
 {
 	PayCommand.registerCommand(event);
+	CustomStats.registerCommand(event);
 });

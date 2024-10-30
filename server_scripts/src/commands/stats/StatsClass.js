@@ -1,50 +1,49 @@
 // priority: 0
 
-
-/**
- * @typedef {"attack_damage" | "attack_speed" | "max_health" | "movement_speed" | "luck" | "agility"} StatId
- */
-const StatIds = Object.freeze({
-	/**
-	 * Attack Damage (+2.5% per point)
-	 * - #### Ignore armor
-	 */
-	strength: "strength",
-	/**
-	 * Max Health (+0.5 per point)
-	 * - #### Prevent death once per life if 20+ points invested and >=30% of total points
-	 */
-	constitution: "constitution",
-	/**
-	 * Luck
-	 * Bonus Loot
-	 * Critical Bonus Damage (+2.5% per point)
-	 * - #### Players within 16 blocks will glow if 20+ points invested and >=30% of total points
-	 */
-	perception: "perception",
-	/**
-	 * Movement Speed (+0.005 per point)
-	 * Dodge Chance
-	 */
-	agility: "agility",
-	/**
-	 * Attack Speed
-	 */
-	dexterity: "dexterity",
-	/**
-	 * Knockback Resistance
-	 * Lung Capacity
-	 * Armor Toughness
-	 */
-	endurance: "endurance",
-});
-
-const Stats = (function () {
-	Class.MAIN_KEY = "attribute_points";
+const CustomStats = (function () {
+	Class.MAIN_KEY = "player_stats";
 	Class.TOTAL_POINTS_KEY = "total_points";
 	Class.STATS_KEY = "stats";
 
-	Class.INITIAL_POINT_COST = 100;
+	Class.INITIAL_POINT_COST = Money.FromDollar(100.00);
+
+	/**
+	 * @typedef {"strength" | "constitution" | "perception" | "agility" | "dexterity" | "endurance"} StatId
+	 */
+	Class.StatIds = Object.freeze({
+		/**
+		 * Attack Damage (+2.5% per point)
+		 * - #### 
+		 */
+		strength: "strength",
+		/**
+		 * Max Health (+0.5 per point)
+		 * - #### Prevent death once per life if 20+ points invested and >=30% of total points
+		 */
+		constitution: "constitution",
+		/**
+		 * Luck
+		 * Bonus Loot
+		 * Critical Bonus Damage (+2.5% per point)
+		 * - #### Players within 16 blocks will glow if 20+ points invested and >=30% of total points
+		 */
+		perception: "perception",
+		/**
+		 * Movement Speed (+0.005 per point)
+		 * Dodge Chance
+		 */
+		agility: "agility",
+		/**
+		 * Attack Speed
+		 */
+		dexterity: "dexterity",
+		/**
+		 * Knockback Resistance
+		 * Lung Capacity
+		 * Armor Toughness
+		 */
+		endurance: "endurance",
+	});
 
 	Class.prototype.server = undefined;
 	Class.prototype.playerStringUUID = undefined;
@@ -94,8 +93,7 @@ const Stats = (function () {
 		const statsCompound = this.getStatsCompound();
 
 		let spentPoints = 0;
-		statsCompound.allKeys.forEach(key =>
-		{
+		statsCompound.allKeys.forEach(key => {
 			spentPoints += statsCompound.getInt(key);
 		});
 		return spentPoints;
@@ -117,8 +115,7 @@ const Stats = (function () {
 	 * 
 	 * @param {number} amount 
 	 */
-	Class.prototype.addPoints = function (amount)
-	{
+	Class.prototype.addPoints = function (amount) {
 		let totalPoints = this.getTotalPoints();
 		totalPoints += amount;
 
@@ -133,18 +130,16 @@ const Stats = (function () {
 
 	/**
 	 * 
-	 * @param {number} amount 
 	 * @returns {"SUCCESS" | "NOT_ENOUGH_MONEY"}
 	 */
-	Class.prototype.buyPoints = function (amount) {
+	Class.prototype.buyPoint = function () {
 		const cost = this.getNextPointValue();
-		let money = PlayerMoney.get(server, this.playerStringUUID);
-		if (money < cost)
-		{
+		let money = PlayerMoney.get(this.server, this.playerStringUUID);
+		if (money < cost) {
 			return "NOT_ENOUGH_MONEY";
 		}
 		money -= cost;
-		PlayerMoney.set(server, this.playerStringUUID, money);
+		PlayerMoney.set(this.server, this.playerStringUUID, money);
 		this.addPoints(1);
 		return "SUCCESS";
 	}
@@ -153,26 +148,34 @@ const Stats = (function () {
 		const playerCompound = this.getPlayerCompound();
 		playerCompound.remove(Class.STATS_KEY);
 		this.updatePlayerCompound(playerCompound);
+		this.applyStats();
 	}
 
 	/**
 	 * 
 	 * @param {keyof StatId} statId 
 	 * @param {name} amount 
-	 * @returns {"SUCCESS" | "NOT_ENOUGH_POINTS"}
+	 * @returns {"SUCCESS" | "NOT_ENOUGH_POINTS" | "AMOUNT_NOT_VALID" | "STAT_DOES_NOT_EXIST"}
 	 */
 	Class.prototype.spendPoints = function (statId, amount) {
-		const statsCompound = this.getStatsCompound();
+		if (amount <= 0) {
+			return "AMOUNT_NOT_VALID";
+		}
+		if (Class.StatIds[statId] == null) {
+			return "STAT_DOES_NOT_EXIST";
+		}
+
 		const sparePoints = this.getSparePoints();
-		if (amount > sparePoints)
-		{
+		if (amount > sparePoints) {
 			return "NOT_ENOUGH_POINTS";
 		}
 
+		const statsCompound = this.getStatsCompound();
 		const newAmount = this.getPointsFromStat(statId) + amount;
 		statsCompound.putInt(statId, newAmount);
 
 		this.updateStatsCompound(statsCompound);
+		this.applyStats();
 		return "SUCCESS";
 	}
 
@@ -182,6 +185,128 @@ const Stats = (function () {
 	 */
 	Class.prototype.applyStats = function () {
 
+	}
+
+
+
+	/**
+	 * 
+	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
+	 */
+	Class.buyPointCommand = function (context) {
+		const server = context.source.server;
+		const player = context.source.player;
+		const customStats = new Class(server, player.uuid.toString());
+
+		const moneyString = Money.ToDollarString(PlayerMoney.get(server, player));
+		const cost = customStats.getNextPointValue();
+		const result = customStats.buyPoint();
+		switch (result) {
+			case "NOT_ENOUGH_MONEY":
+				player.tell(`Buying the next stat point costs ${cost}, you only have ${moneyString}.`);
+				break;
+			case "SUCCESS":
+				player.tell(`Bought a stat point for ${Money.ToDollarString(cost)}.`);
+				break;
+		}
+		return 1;
+	}
+
+	/**
+	 * 
+	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
+	 */
+	Class.resetPointsCommand = function (context) {
+		const { server, player } = context.source;
+		const stats = new Class(server, player.uuid.toString());
+
+		stats.resetStats();
+		player.tell("Successfully reset stats");
+		return 1;
+	}
+
+	/**
+	 * 
+	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context 
+	 */
+	Class.spendPointsCommand = function (context) {
+		const { server, player } = context.source;
+		/** @type {string} */
+		const statId = $Arguments.STRING.getResult(context, Class.STAT_ID_ARG_KEY);
+		/** @type {number} */
+		const amount = $Arguments.INTEGER.getResult(context, Class.AMOUNT_ARG_KEY);
+
+		const stats = new Class(server, player.uuid.toString());
+
+		const result = stats.spendPoints(statId, amount);
+		switch (result) {
+			case "AMOUNT_NOT_VALID":
+				player.tell("Amount must be greater than or equal to 0");
+				break;
+			case "STAT_DOES_NOT_EXIST":
+				player.tell("Stat does not exist.");
+				break;
+			case "NOT_ENOUGH_POINTS":
+				player.tell("Not enough points.")
+				break;
+			case "SUCCESS":
+				player.tell(`Added ${amount} point(s) to ${statId}`);
+				break;
+		}
+		return 1;
+	}
+
+	/**
+	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
+	 */
+	Class.infoCommand = function (context) { }
+
+
+	/**
+	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
+	 * @param {Internal.SuggestionsBuilder} builder
+	 */
+	Class.suggestStatIds = function (context, builder) {
+		for (let statId of Object.values(Class.StatIds)) {
+			builder.suggest(Class.StatIds[statId]);
+		}
+		return builder.buildFuture();
+	}
+
+
+	Class.STAT_ID_ARG_KEY = "stat_id";
+	Class.AMOUNT_ARG_KEY = "amount";
+	/**
+	 * 
+	 * @param {Internal.CommandRegistryEventJS} event 
+	 */
+	Class.registerCommand = function (event) {
+		const command = ($Commands.literal("stats")
+			.then(
+				$Commands.literal("buy")
+					.executes(context => Class.buyPointCommand(context))
+			)
+			.then(
+				$Commands.literal("reset")
+					.executes(context => Class.resetPointsCommand(context))
+			)
+			// /stats spend <stat_id> <amount>
+			.then(
+				$Commands.literal("spend")
+					.then(
+						$Commands.argument(Class.STAT_ID_ARG_KEY, $Arguments.STRING.create(event))
+							.suggests((context, builder) => Class.suggestStatIds(context, builder))
+							.then(
+								$Commands.argument(Class.AMOUNT_ARG_KEY, $Arguments.INTEGER.create(event))
+									.executes(context => Class.spendPointsCommand(context))
+							)
+					)
+			)
+			.then(
+				$Commands.literal("info")
+			)
+		);
+		event.register(command);
 	}
 
 
