@@ -6,11 +6,11 @@
 		"command_survival:human",
 		"command_survival:warped",
 		"command_survival:cogwork",
-		"command_survival:zephyr"
+		"command_survival:zephyr",
+		"command_survival:dryad"
 	],
 	"allow_random": true,
 	"exclude_random": [
-		"origins:human"
 	],
 	"allow_random_unchoosable": false,
 	"hidden": false
