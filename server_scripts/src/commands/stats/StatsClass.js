@@ -5,45 +5,7 @@ const CustomStats = (function () {
 	Class.TOTAL_POINTS_KEY = "total_points";
 	Class.STATS_KEY = "stats";
 
-	Class.INITIAL_POINT_COST = Money.FromDollar(100.00);
-
-	/**
-	 * @typedef {"strength" | "constitution" | "perception" | "agility" | "dexterity" | "endurance"} StatId
-	 */
-	Class.StatIds = Object.freeze({
-		/**
-		 * Attack Damage (+2.5% per point)
-		 * - #### 
-		 */
-		strength: "strength",
-		/**
-		 * Max Health (+0.5 per point)
-		 * - #### Prevent death once per life if 20+ points invested and >=30% of total points
-		 */
-		constitution: "constitution",
-		/**
-		 * Luck
-		 * Bonus Loot
-		 * Critical Bonus Damage (+2.5% per point)
-		 * - #### Players within 16 blocks will glow if 20+ points invested and >=30% of total points
-		 */
-		perception: "perception",
-		/**
-		 * Movement Speed (+0.005 per point)
-		 * Dodge Chance
-		 */
-		agility: "agility",
-		/**
-		 * Attack Speed
-		 */
-		dexterity: "dexterity",
-		/**
-		 * Knockback Resistance
-		 * Lung Capacity
-		 * Armor Toughness
-		 */
-		endurance: "endurance",
-	});
+	Class.INITIAL_POINT_COST = Money.FromDollar(80.00);
 
 	Class.prototype.server = undefined;
 	Class.prototype.playerStringUUID = undefined;
@@ -153,7 +115,7 @@ const CustomStats = (function () {
 
 	/**
 	 * 
-	 * @param {keyof StatId} statId 
+	 * @param {StatId} statId 
 	 * @param {name} amount 
 	 * @returns {"SUCCESS" | "NOT_ENOUGH_POINTS" | "AMOUNT_NOT_VALID" | "STAT_DOES_NOT_EXIST"}
 	 */
@@ -161,7 +123,7 @@ const CustomStats = (function () {
 		if (amount <= 0) {
 			return "AMOUNT_NOT_VALID";
 		}
-		if (Class.StatIds[statId] == null) {
+		if (CustomStatData[statId] == null) {
 			return "STAT_DOES_NOT_EXIST";
 		}
 
@@ -184,8 +146,68 @@ const CustomStats = (function () {
 	 * - Should be called whenever the player spends an attribute point, resets their attribute points, or respawns/rejoins
 	 */
 	Class.prototype.applyStats = function () {
-
+		const player = this.server.players.toArray().find(player => player.uuid.toString() == this.playerStringUUID);
+		this.applyStrength(player);
+		this.applyConstitution(player);
+		this.applyPerception(player);
 	}
+
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyStrength = function (player) {
+		const points = this.getPointsFromStat(String(CustomStatData.strength));
+		const newValue = points * 0.025;
+
+		const helper = new AttributeModifierHelper(player, $Attributes.ATTACK_DAMAGE, CustomStatData.strength.modifierUUID, CustomStatData.strength.modifierName);
+		const oldValue = helper.getModifierValue();
+		if (newValue != oldValue) {
+			helper.removeModifier();
+			helper.addModifier(newValue, "multiply_total");
+		}
+	}
+
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyConstitution = function (player) {
+		const points = this.getPointsFromStat(String(CustomStatData.constitution));
+		const newValue = points;
+
+		const helper = new AttributeModifierHelper(player, $Attributes.MAX_HEALTH, CustomStatData.constitution.modifierUUID, CustomStatData.constitution.modifierName);
+		const oldValue = helper.getModifierValue();
+		if (newValue != oldValue) {
+			helper.removeModifier();
+			helper.addModifier(newValue, "multiply_total");
+			helper.updateHealth();
+		}
+	}
+
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyPerception = function (player) {
+		const points = this.getPointsFromStat(String(CustomStatData.perception));
+		const newValue = points;
+
+		const helper = new AttributeModifierHelper(player, $Attributes.MAX_HEALTH, CustomStatData.perception.modifierUUID, CustomStatData.perception.modifierName);
+		const oldValue = helper.getModifierValue();
+		if (newValue != oldValue) {
+			helper.removeModifier();
+			helper.addModifier(newValue, "multiply_total");
+			helper.updateHealth();
+		}
+	}
+
+	/**
+	 * @param {Internal.Player} player 
+	 * @param {number} amountPerPoint
+	 * @param {Internal.Attribute} attribute 
+	 * @param {StatId} statId 
+	 * @param {Internal.AttributeModifier$Operation_}
+	 * @param {boolean} updateHealth 
+	 */
+	Class.prototype.applyGenericAttribute = function (player, amountPerPoint, attribute, statId, operation, updateHealth) {}
 
 
 
@@ -259,7 +281,14 @@ const CustomStats = (function () {
 	/**
 	 * @param {Internal.CommandContext<Internal.CommandSourceStack>} context
 	 */
-	Class.infoCommand = function (context) { }
+	Class.infoCommand = function (context) {
+		const { server, player } = context.source;
+		const stats = new Class(server, player.uuid.toString());
+
+		const text = JsonIO.readString("kubejs/server_scripts/src/commands/stats/info.json");
+		server.runCommandSilent(`tellraw ${player.username} ${text}`);
+		return 1;
+	}
 
 
 	/**
@@ -267,8 +296,8 @@ const CustomStats = (function () {
 	 * @param {Internal.SuggestionsBuilder} builder
 	 */
 	Class.suggestStatIds = function (context, builder) {
-		for (let statId of Object.values(Class.StatIds)) {
-			builder.suggest(Class.StatIds[statId]);
+		for (let statId of Object.values(CustomStatData)) {
+			builder.suggest(CustomStatData[statId]);
 		}
 		return builder.buildFuture();
 	}
@@ -304,6 +333,7 @@ const CustomStats = (function () {
 			)
 			.then(
 				$Commands.literal("info")
+					.executes(context => Class.infoCommand(context))
 			)
 		);
 		event.register(command);
