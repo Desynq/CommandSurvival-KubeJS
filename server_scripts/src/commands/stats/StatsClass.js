@@ -150,53 +150,56 @@ const CustomStats = (function () {
 		this.applyStrength(player);
 		this.applyConstitution(player);
 		this.applyPerception(player);
+		this.applyAgility(player);
+		this.applyDexterity(player);
+		this.applyEndurance(player);
 	}
 
 	/**
 	 * @param {Internal.Player} player
 	 */
 	Class.prototype.applyStrength = function (player) {
-		const points = this.getPointsFromStat(String(CustomStatData.strength));
-		const newValue = points * 0.025;
-
-		const helper = new AttributeModifierHelper(player, $Attributes.ATTACK_DAMAGE, CustomStatData.strength.modifierUUID, CustomStatData.strength.modifierName);
-		const oldValue = helper.getModifierValue();
-		if (newValue != oldValue) {
-			helper.removeModifier();
-			helper.addModifier(newValue, "multiply_total");
-		}
+		this.applyGenericAttribute(player, "strength", $Attributes.ATTACK_DAMAGE, 0.025, "multiply_total");
 	}
 
 	/**
 	 * @param {Internal.Player} player
 	 */
 	Class.prototype.applyConstitution = function (player) {
-		const points = this.getPointsFromStat(String(CustomStatData.constitution));
-		const newValue = points;
-
-		const helper = new AttributeModifierHelper(player, $Attributes.MAX_HEALTH, CustomStatData.constitution.modifierUUID, CustomStatData.constitution.modifierName);
-		const oldValue = helper.getModifierValue();
-		if (newValue != oldValue) {
-			helper.removeModifier();
-			helper.addModifier(newValue, "multiply_total");
-			helper.updateHealth();
-		}
+		this.applyGenericAttribute(player, "constitution", $Attributes.MAX_HEALTH, 1, "addition");
 	}
 
 	/**
 	 * @param {Internal.Player} player
 	 */
 	Class.prototype.applyPerception = function (player) {
-		const points = this.getPointsFromStat(String(CustomStatData.perception));
-		const newValue = points;
+		this.applyGenericAttribute(player, "perception", $Attributes.LUCK, 0.1, "addition");
+		// this.applyGenericAttribute(player, "perception", global.$AdditionalEntityAttributes.BONUS_LOOT_COUNT_ROLLS, 0.1, "addition");
+		// this.applyGenericAttribute(player, "perception", global.$AdditionalEntityAttributes.BONUS_RARE_LOOT_ROLLS, 0.05, "addition");
+		//this.applyGenericAttribute(player, "perception", global.$AdditionalEntityAttributes.CRITICAL_BONUS_DAMAGE, 0.025, "multiply_total");
+	}
 
-		const helper = new AttributeModifierHelper(player, $Attributes.MAX_HEALTH, CustomStatData.perception.modifierUUID, CustomStatData.perception.modifierName);
-		const oldValue = helper.getModifierValue();
-		if (newValue != oldValue) {
-			helper.removeModifier();
-			helper.addModifier(newValue, "multiply_total");
-			helper.updateHealth();
-		}
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyAgility = function (player) {
+		this.applyGenericAttribute(player, "agility", $Attributes.MOVEMENT_SPEED, 0.005, "addition");
+	}
+
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyDexterity = function (player) {
+		this.applyGenericAttribute(player, "dexterity", $Attributes.ATTACK_SPEED, 0.025, "multiply_total");
+	}
+
+	/**
+	 * @param {Internal.Player} player
+	 */
+	Class.prototype.applyEndurance = function (player) {
+		this.applyGenericAttribute(player, "endurance", $Attributes.KNOCKBACK_RESISTANCE, 0.01, "addition");
+		this.applyGenericAttribute(player, "endurance", $Attributes.KNOCKBACK_RESISTANCE, 0.025, "multiply_total", 2);
+		this.applyGenericAttribute(player, "endurance", $Attributes.ARMOR_TOUGHNESS, 0.025, "multiply_total");
 	}
 
 	/**
@@ -204,10 +207,28 @@ const CustomStats = (function () {
 	 * @param {number} amountPerPoint
 	 * @param {Internal.Attribute} attribute 
 	 * @param {StatId} statId 
-	 * @param {Internal.AttributeModifier$Operation_}
-	 * @param {boolean} updateHealth 
+	 * @param {Internal.AttributeModifier$Operation_} operation
+	 * @param {number} index optional
 	 */
-	Class.prototype.applyGenericAttribute = function (player, amountPerPoint, attribute, statId, operation, updateHealth) {}
+	Class.prototype.applyGenericAttribute = function (player, statId, attribute, amountPerPoint, operation, index) {
+		const modifierUUID = CustomStatData[statId][`modifierUUID${index ? index : ""}`];
+		const modifierName = CustomStatData[statId][`modifierName${index ? index : ""}`];
+		player.tell(modifierUUID);
+
+		const points = this.getPointsFromStat(statId);
+		const newValue = amountPerPoint * points;
+
+		const helper = new AttributeModifierHelper(player, attribute, modifierUUID, modifierName);
+		const oldValue = helper.getModifierValue();
+
+		if (newValue != oldValue) {
+			helper.removeModifier();
+			helper.addModifier(newValue, operation);
+			if (attribute == $Attributes.MAX_HEALTH) {
+				helper.updateHealth();
+			}
+		}
+	}
 
 
 
@@ -296,8 +317,8 @@ const CustomStats = (function () {
 	 * @param {Internal.SuggestionsBuilder} builder
 	 */
 	Class.suggestStatIds = function (context, builder) {
-		for (let statId of Object.values(CustomStatData)) {
-			builder.suggest(CustomStatData[statId]);
+		for (let statId of Object.keys(CustomStatData)) {
+			builder.suggest(statId);
 		}
 		return builder.buildFuture();
 	}

@@ -49,4 +49,9 @@ const $UUID = Java.loadClass("java.util.UUID");
 /*
 net.minecraft.world.entity.player
 */
-global.$Player = Java.loadClass('net.minecraft.world.entity.player.Player');
+global.$Player = Java.loadClass("net.minecraft.world.entity.player.Player");
+
+/*
+de.dafuqs.additionalentityattributes
+*/
+global.$AdditionalEntityAttributes = Java.loadClass("de.dafuqs.additionalentityattributes.AdditionalEntityAttributes");
