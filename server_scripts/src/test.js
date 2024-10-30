@@ -1,8 +1,5 @@
 // priority: 0
 
-import { $MinecraftServer } from "packages/net/minecraft/server/$MinecraftServer";
-import { $Player } from "packages/net/minecraft/world/entity/player/$Player";
-
 // Visit the wiki for more info - https://kubejs.com/
 
 console.info('Hello, World! (Loaded server scripts)');
@@ -31,11 +28,3 @@ function Spartan(spartanPlayer, server) {
 	server.runCommandSilent(`bossbar set minecraft:bossbar max ${maxHealth.toString()}`);
 	server.runCommandSilent(`bossbar set minecraft:bossbar value ${health.toString()}`);
 }
-
-
-
-
-
-
-
-new StartupLogger('Loaded test.js');
