@@ -12,6 +12,7 @@ const SellableItems = {
 	// blocks
 	"minecraft:netherrack": [Money.FromDollar(0.01)],
 	"minecraft:cobbled_deepslate": [Money.FromDollar(0.01)],
+	"minecraft:deepslate": [Money.FromDollar(0.01)],
 
 	// gems
 	"minecraft:diamond": [Money.FromDollar(100.00), 0.2, 100],
@@ -19,7 +20,7 @@ const SellableItems = {
 
 	// ingots
 	"minecraft:iron_ingot": [Money.FromDollar(4.00), 0.2, 200],
-	"minecraft:gold_ingot": [Money.FromDollar(5.00)],
+	"minecraft:gold_ingot": [Money.FromDollar(10.00)],
 	"minecraft:copper_ingot": [Money.FromDollar(0.50), 0.2, 400],
 	"create:zinc_ingot": [Money.FromDollar(2.00), 0.2, 200],
 	"minecraft:netherite_ingot": [Money.FromDollar(1000.0), 0.5, 100],
