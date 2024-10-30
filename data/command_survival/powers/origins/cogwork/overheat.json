@@ -165,10 +165,17 @@
 			"actions": [
 				{
 					"type": "origins:explode",
-					"power": 6,
+					"power": 3,
 					"destruction_type": "break",
 					"damage_self": true,
 					"create_fire": true
+				},
+				{
+					"type": "origins:play_sound",
+					"category": "master",
+					"pitch": 1,
+					"sound": "minecraft:entity.generic.explode",
+					"volume": 3
 				},
 				{
 					"type": "origins:damage",
