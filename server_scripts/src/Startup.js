@@ -9,6 +9,7 @@
 	let hasLoaded = false;
 
 	ServerEvents.tick(event => {
+		const { server } = event;
 		if (hasLoaded)
 		{
 			return;

@@ -142,6 +142,13 @@ AdminCommand.AddPlayer = function (context)
 	PlayerIdentifiers.appendUsernameToStringUUIDMap(server, username, stringUUID);
 }
 
+AdminCommand.spyPlayerStats = function (context) {
+	const { server, player } = context.source;
+	const spiedUsername = $Arguments.STRING.getResult(context, "username");
+	const spiedUUID = PlayerIdentifiers.getStringUUIDFromUsername(server, spiedUsername);
+	const spiedStats = new CustomStats(server, spiedUUID);
+}
+
 
 
 ServerEvents.commandRegistry(event =>
@@ -196,6 +203,14 @@ ServerEvents.commandRegistry(event =>
 			)
 		)
 
+		.then($Commands.literal("player")
+			.then($Commands.argument("username", $Arguments.STRING.create(event))
+				.then($Commands.literal("stats")
+					.executes(context => AdminCommand.spyPlayerStats(context))
+				)
+			)
+		)
+
 		.then($Commands.literal("reload")
 			.executes(context =>
 			{
@@ -219,6 +234,6 @@ ServerEvents.commandRegistry(event =>
 			)
 		)
 
-
+		.then($Commands.literal("spawn"))
 	);
 });

@@ -12,3 +12,13 @@ EntityEvents.hurt("minecraft:creeper", event => {
 		creeper.ignite();
 	}
 });
+
+EntityEvents.hurt("minecraft:player", event => {
+	const server = event.server;
+	/** @type {Internal.Player} */
+	const player = event.entity;
+
+	if (event.source.creativePlayer && player.level.dimension == "dimdoors:public_pockets") {
+		event.cancel();
+	}
+});
